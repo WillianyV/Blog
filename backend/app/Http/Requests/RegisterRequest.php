@@ -26,14 +26,7 @@ class RegisterRequest extends FormRequest
         return [
             'name' => 'bail|required|string',
             'email' => 'bail|required|email|unique:users,email',
-            'password' => 'bail|required|min:6|confirmed'
+            'password' => 'bail|required|min:6'
         ];
-    }
-
-    public function messages()
-    {
-        return response([
-            'message' => 'E-mail ou Senha icorreta.'
-        ],403);
     }
 }

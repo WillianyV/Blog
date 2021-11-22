@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,16 +33,20 @@ class AuthController extends Controller
     }
 
     //login
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $attrs = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|min:6'
+        // $attrs = $request->validate([
+        //     'email' => 'required|email',
+        //     'password' => 'required|min:6'
+        // ]);
+        $attrs = ([
+            'email' => $request->email,
+            'password' =>$request->password
         ]);
 
         if(!Auth::attempt($attrs)){
             return response([
-                'message' => 'E-mail ou Senha icorreta.'
+                'message' => 'E-mail e/ou Senha icorreta.'
             ],400);
         }
         //retornando o usuario e o token em response
