@@ -27,6 +27,6 @@ Row kLoginRegisteHint(String text, String textGesture, Function onTap) {
     Text(text),
     GestureDetector(
         child: Text(textGesture, style: TextStyle(color: Colors.blue)),
-        onTap: () => onTap)
+        onTap: () => onTap())
   ]);
 }

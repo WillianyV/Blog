@@ -81,7 +81,7 @@ class _LoginState extends State<Login> {
                     }
                   }),
             SizedBox(height: 10),
-            kLoginRegisteHint('Não tem uma conta?', 'Cadastre-se', () {
+            kLoginRegisteHint('Não tem uma conta? ', 'Cadastre-se', () {
               Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (context) => Register()),
                   (route) => false);
