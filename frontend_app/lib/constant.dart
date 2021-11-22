@@ -10,4 +10,5 @@ const commentsURL = baseURL + '/comments';
 //-------- Erros --------
 const serverError = 'Error ao se Conctar ao Servidor';
 const unauthorized = 'Acesso não atorizado';
-const somethingWentWrong = 'Algo deu errado, tente novamente!';
+const somethingWentWrong = 'Algo deu errado, tente novamente';
+const emailOrPasswordIsWrong = 'E-mail e/ou senha incorreta';
