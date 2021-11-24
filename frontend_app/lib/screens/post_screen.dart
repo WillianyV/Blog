@@ -125,7 +125,9 @@ class _PostScreenState extends State<PostScreen> {
                                 : SizedBox()
                           ],
                         ),
-                        SizedBox(height: 12),
+                        SizedBox(
+                          height: 12,
+                        ),
                         Text('${post.body}'),
                         post.image != null
                             ? Container(
@@ -133,10 +135,9 @@ class _PostScreenState extends State<PostScreen> {
                                 height: 180,
                                 margin: EdgeInsets.only(top: 5),
                                 decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: NetworkImage('${post.image}'),
-                                      fit: BoxFit.cover),
-                                ),
+                                    image: DecorationImage(
+                                        image: NetworkImage('${post.image}'),
+                                        fit: BoxFit.cover)),
                               )
                             : SizedBox(
                                 height: post.image != null ? 0 : 10,

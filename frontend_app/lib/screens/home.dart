@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_app/main.dart';
 import 'package:frontend_app/screens/login.dart';
 import 'package:frontend_app/screens/post_form.dart';
 import 'package:frontend_app/screens/post_screen.dart';
