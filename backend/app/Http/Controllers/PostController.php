@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostStoreUpdateRequest;
 use App\Models\Post;
 use Illuminate\Http\Request;
 
@@ -23,16 +24,12 @@ class PostController extends Controller
         ],200);
     }
 
-    public function store(Request $request)
+    public function store(PostStoreUpdateRequest $request)
     {
-        $attrs = $request->validate([
-            'body' => 'required|string'
-        ]);
-
         $image = $this->saveImage($request->image, 'posts');
 
         $post = Post::create([
-            'body' => $attrs['body'],
+            'body' => $request->body,
             'user_id' => auth()->user()->id,
             'image' => $image
         ]);
@@ -49,7 +46,7 @@ class PostController extends Controller
         ],200);
     }
 
-    public function update(Request $request,$id)
+    public function update(PostStoreUpdateRequest $request,$id)
     {
         $post = Post::find($id);
 
@@ -65,12 +62,8 @@ class PostController extends Controller
             ],403);            
         }
 
-        $attrs = $request->validate([
-            'body' => 'required|string'
-        ]);
-
         $post->update([
-            'body' => $attrs['body']
+            'body' => $request->body
         ]);
 
         return response([

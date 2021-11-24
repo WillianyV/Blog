@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\UserStoreRequest;
+use App\Http\Requests\UserUpdateRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,19 +12,12 @@ use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller
 {
     //registrar usuarios
-    public function register(Request $request)
+    public function register(UserStoreRequest $request)
     {
-        $attrs = $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6'
-        ]);
-
-        //criando o usuario
         $user = User::create([
-            'name' => $attrs['name'],
-            'email' => $attrs['email'],
-            'password' => bcrypt($attrs['password']),
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
         ]);
 
         //retornando o usuario e o token em response
@@ -35,10 +30,6 @@ class AuthController extends Controller
     //login
     public function login(LoginRequest $request)
     {
-        // $attrs = $request->validate([
-        //     'email' => 'required|email',
-        //     'password' => 'required|min:6'
-        // ]);
         $attrs = ([
             'email' => $request->email,
             'password' =>$request->password
@@ -73,16 +64,12 @@ class AuthController extends Controller
         ],200);
     }
 
-    public function update(Request $request)
+    public function update(UserUpdateRequest $request)
     {
-        $attrs = $request->validate([
-            'name' => 'required|string'
-        ]);
-
         $image = $this->saveImage($request->image,'profiles');
 
         auth()->user()->update([
-            'name' => $attrs['name'],
+            'name' => $request->name,
             'image' => $image
         ]);
 

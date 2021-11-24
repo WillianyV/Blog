@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CommentStoreUpdateRequest;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\Comment;
@@ -23,7 +24,7 @@ class CommentController extends Controller
         ],200);
     }
 
-    public function store(Request $request,$id)
+    public function store(CommentStoreUpdateRequest $request,$id)
     {
         $post = Post::find($id);
 
@@ -33,12 +34,8 @@ class CommentController extends Controller
             ],403);            
         }
 
-        $attrs = $request->validate([
-            'comment' => 'required|string'
-        ]);
-
         Comment::create([
-            'comment' => $attrs['comment'],
+            'comment' => $request->comment,
             'post_id' => $id,
             'user_id' => auth()->user()->id
         ]);
@@ -48,7 +45,7 @@ class CommentController extends Controller
         ],200);
     }
 
-    public function update(Request $request,$id)
+    public function update(CommentStoreUpdateRequest $request,$id)
     {
         $comment = Comment::find($id);
 
@@ -64,12 +61,8 @@ class CommentController extends Controller
             ],403);            
         }
 
-        $attrs = $request->validate([
-            'comment' => 'required|string'
-        ]);
-
         $comment->update([
-            'comment' => $attrs['comment']
+            'comment' => $request->comment
         ]);
 
         return response([
