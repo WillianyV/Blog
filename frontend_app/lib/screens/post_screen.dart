@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:frontend_app/constant.dart';
 import 'package:frontend_app/models/api_response.dart';
 import 'package:frontend_app/models/post.dart';
+import 'package:frontend_app/screens/comment_screen.dart';
 import 'package:frontend_app/screens/components/components.dart';
 import 'package:frontend_app/screens/login.dart';
+import 'package:frontend_app/screens/post_form.dart';
 import 'package:frontend_app/services/post_service.dart';
 import 'package:frontend_app/services/user_service.dart';
 
@@ -15,20 +17,55 @@ class PostScreen extends StatefulWidget {
 }
 
 class _PostScreenState extends State<PostScreen> {
-  //variaveis
   List<dynamic> _postList = [];
   int userId = 0;
   bool _loading = true;
-  //metodos
-  //pegar todos os posts
+
+  // get all posts
   Future<void> retrievePosts() async {
     userId = await getUseId();
     ApiResponse response = await getPosts();
+
     if (response.error == null) {
       setState(() {
         _postList = response.data as List<dynamic>;
         _loading = _loading ? !_loading : _loading;
       });
+    } else if (response.error == unauthorized) {
+      logout().then((value) => {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => Login()),
+                (route) => false)
+          });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('${response.error}'),
+      ));
+    }
+  }
+
+  void _handleDeletePost(int postId) async {
+    ApiResponse response = await deletePost(postId);
+    if (response.error == null) {
+      retrievePosts();
+    } else if (response.error == unauthorized) {
+      logout().then((value) => {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => Login()),
+                (route) => false)
+          });
+    } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('${response.error}')));
+    }
+  }
+
+  // post like dislik
+  void _handlePostLikeDislike(int postId) async {
+    ApiResponse response = await likeUnlikePost(postId);
+
+    if (response.error == null) {
+      retrievePosts();
     } else if (response.error == unauthorized) {
       logout().then((value) => {
             Navigator.of(context).pushAndRemoveUntil(
@@ -98,27 +135,28 @@ class _PostScreenState extends State<PostScreen> {
                             post.user!.id == userId
                                 ? PopupMenuButton(
                                     child: Padding(
-                                      padding: EdgeInsets.only(right: 10),
-                                      child: Icon(
-                                        Icons.more_vert,
-                                        color: Colors.black,
-                                      ),
-                                    ),
+                                        padding: EdgeInsets.only(right: 10),
+                                        child: Icon(
+                                          Icons.more_vert,
+                                          color: Colors.black,
+                                        )),
                                     itemBuilder: (context) => [
                                       PopupMenuItem(
-                                        child: Text('Editar'),
-                                        value: 'edit',
-                                      ),
+                                          child: Text('Editar'), value: 'edit'),
                                       PopupMenuItem(
-                                        child: Text('Excluir'),
-                                        value: 'delete',
-                                      ),
+                                          child: Text('Excluir'),
+                                          value: 'delete')
                                     ],
                                     onSelected: (val) {
                                       if (val == 'edit') {
-                                        //edit
+                                        Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                                builder: (context) => PostForm(
+                                                      title: 'Edit Post',
+                                                      post: post,
+                                                    )));
                                       } else {
-                                        //delete
+                                        _handleDeletePost(post.id ?? 0);
                                       }
                                     },
                                   )
@@ -151,21 +189,27 @@ class _PostScreenState extends State<PostScreen> {
                                     : Icons.favorite_outline,
                                 post.selfLiked == true
                                     ? Colors.red
-                                    : Colors.black54,
-                                () {}),
+                                    : Colors.black54, () {
+                              _handlePostLikeDislike(post.id ?? 0);
+                            }),
                             Container(
                               height: 25,
                               width: 0.5,
                               color: Colors.black38,
                             ),
                             kLikeAndComment(post.commentsCount ?? 0,
-                                Icons.sms_outlined, Colors.black54, () {}),
+                                Icons.sms_outlined, Colors.black54, () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => CommentScreen(
+                                        postId: post.id,
+                                      )));
+                            }),
                           ],
                         ),
                         Container(
                           width: MediaQuery.of(context).size.width,
                           height: 0.5,
-                          color: Colors.black38,
+                          color: Colors.black26,
                         ),
                       ],
                     ),
